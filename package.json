@@ -1,0 +1,25 @@
+{
+  "name": "bienes_raices",
+  "version": "1.0.0",
+  "description": "Aplicacion Bienes Raices",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node ./index.js",
+    "server": "nodemon ./index.js"
+  },
+  "keywords": [
+    "Mysql",
+    "Express",
+    "Tailwindcss"
+  ],
+  "author": "Sandra Milena Villamizar Suarez",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
