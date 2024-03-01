@@ -13,6 +13,9 @@ app.set('view engine', 'pug') //voy a utilizar un motor de plantillas llamado pu
 app.set('views','./views')  // ruta donde estaran las vistas
 
 
+// 6.  Carpeta Publica
+app.use(express.static ('public'))
+
 //4.  crear Routing
 app.use('/auth', usuarioRoutes);  //vas a usar en la ruta principal usuarioRoutes 
 app.use('/propiedades', usuarioRoutes);

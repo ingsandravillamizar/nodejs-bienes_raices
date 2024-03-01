@@ -1,10 +1,24 @@
 const formLogin = (req,res)=>{
-    res.render('auth/login',{
-        autenticado : false
-    });
+    res.render('auth/login'),{
+        page : 'Inicio de sesion' 
+    };
+}
+
+const formRegister = (req,res)=>{
+    res.render('auth/register'),{
+        page: 'Crear Cuenta'
+    };
+}
+
+const formForgotPassword = (req, res) =>{
+    res.render('auth/forgot-password', {
+        page : '¿Olvidaste tu contraseña?  Recuperala'
+    })
 }
 
 //Aqui me permite exportar varios elementos
 export {
-    formLogin
+    formLogin,
+    formRegister,
+    formForgotPassword
 }
