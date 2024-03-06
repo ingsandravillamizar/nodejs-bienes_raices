@@ -6,7 +6,7 @@ block contenido
         h2.text-center.text-4xl.font-extrabold= page
         if errors
             each error in errors 
-                p.bg-red-600.text-white.uppercase.text-xs.text-center.p-6.mb-1.font-bold= error.msg
+                p.bg-colorError.text-white.uppercase.text-xs.text-center.p-6.mb-1.font-bold= error.msg
 
         .mt-8.mx-auto.max-w-md.bg-white.py-8.px-4.shadow 
             form.space-y-5(method= "POST", action="login")
@@ -19,4 +19,4 @@ block contenido
                 div.flex.items-center.justify-between
                     a.text-gray-500.text-xs(href="/auth/register") ¿Aún no tienes cuenta? Registráte
                     a.text-gray-500.text-xs(href="/auth/forgot") Olvide contraseña
-                input(class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 font-bold cursor-pointer" type="submit" value="Iniciar sesión")
+                input(class="w-full bg-boton hover:bg-botonHover text-white py-2 font-bold cursor-pointer" type="submit" value="Iniciar sesión")

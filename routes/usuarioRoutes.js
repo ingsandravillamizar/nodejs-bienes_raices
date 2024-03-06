@@ -1,5 +1,5 @@
 import express from 'express';
-import { forgot, formForgotPassword, formLogin, formRegister,  iniciarSesion,  register } from '../controllers/usuarioController.js'; 
+import { confirmarTokenRegistro, forgot, formForgotPassword, formLogin, formRegister,  iniciarSesion,  register } from '../controllers/usuarioController.js'; 
 
 const router = express.Router();
 
@@ -10,6 +10,8 @@ router.post('/register', register);
 router.get('/forgot', formForgotPassword);
 router.post('/forgot', forgot);
 
+//Ruta validacion token para confirmacion de correo en registro
+router.get('/confirmar/:token',confirmarTokenRegistro)
 
 
 export default router;   //Exporta un elemento
