@@ -3,6 +3,7 @@
 // 1.  Cargamos express     mediante //ECMA-Script Modules, En package.json y agregar   "type": "module",
 import express from 'express';     
 import usuarioRoutes from './routes/usuarioRoutes.js';
+import propiedadRoutes from './routes/propiedadRoutes.js';
 import db from './config/db.js';
 import cookieParser from 'cookie-parser';
 import csurf from 'tiny-csrf';
@@ -42,7 +43,7 @@ app.use(express.static ('public'))
 
 //4.  crear Routing
 app.use('/auth', usuarioRoutes);  //vas a usar en la ruta principal usuarioRoutes 
-app.use('/propiedades', usuarioRoutes);
+app.use('/', propiedadRoutes);
 
 
 //3.  Definir Puerto 
