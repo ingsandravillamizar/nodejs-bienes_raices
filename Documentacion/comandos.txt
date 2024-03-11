@@ -14,3 +14,7 @@ manejo de variables:  npm i dotenv
 Validaciones   : npm i express-validator
 Encriptar      : npm i bcrypt
 Envio de correo: npm install nodemailer
+
+JsonwebTokens:   npm install jsonwebtoken
+cookies      :   npm install cookie-parser
+csrf         :   npm i tiny-csrf

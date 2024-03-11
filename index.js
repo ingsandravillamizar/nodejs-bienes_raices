@@ -4,6 +4,9 @@
 import express from 'express';     
 import usuarioRoutes from './routes/usuarioRoutes.js';
 import db from './config/db.js';
+import cookieParser from 'cookie-parser';
+import csurf from 'tiny-csrf';
+
 
 // 2.  crear la variable app  para LEVANTAR EL SERVIDOR 
 const app = express();
@@ -21,6 +24,13 @@ try {
 
 //Habilitar lectura de datos
 app.use(express.urlencoded({ extended: true }));
+
+//Habilitar Cookie Parser
+app.use(cookieParser("cookie-parser-secret"));
+
+// Habilitar el CSRF
+app.use(csurf("123456789iamasecret987654321look"));   //string de 32 caracteres
+
 
 // 5.  Habilitar plantilla Pub:  configuramos
 app.set('view engine', 'pug') //voy a utilizar un motor de plantillas llamado pug
