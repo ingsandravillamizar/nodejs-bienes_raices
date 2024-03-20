@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 import csurf from 'tiny-csrf';
 
 
+
 // 2.  crear la variable app  para LEVANTAR EL SERVIDOR 
 const app = express();
 
@@ -16,8 +17,10 @@ const app = express();
 
 try {
     await db.authenticate();
-    db.sync();
-    console.info('Conexion exitosa a la base de datos');
+    console.info('Conexión exitosa a la base de datos');
+    await db.sync();
+    console.info('Sincronización completada');
+ 
 } catch (error) {
     console.log(error);
 }

@@ -1,0 +1,37 @@
+ Asociaciones(relaciones) en Sequelize
+
+    Relaciones soportadas:
+        1:1
+        1:N
+        N:N
+    
+    Métodos:
+        hasOne
+            Relaciones de 1:1, donde un registro puede tener hasta 1 relacion con otro registro de otra tabla
+
+            Ej. User->perfil
+
+            Sintaxis
+                User.hasOne(perfil)
+        belongsTo
+            Sintaxis
+                Perfil.belongsTo(User)
+           
+        hasMany
+            Relaciones de 1:N
+
+             Ej.
+                Vendedor->Propiedades
+                Usuario -> Posts
+                Categorias->Propiedades
+
+            Sintaxis:
+                Usuario.hasMany(Posts)
+                Post.belongsTo(Usuario)
+
+        belongsToMany
+            Relaciones de N:N, generalmente en estas relaciones se utilizan 3 tablas con una pivote
+
+            Sintaxis:
+                Estudiante.belongsToMany(Clase,{ through: Horario})
+                Clase.belongsToMany(Estudiante,{ through: Horario})

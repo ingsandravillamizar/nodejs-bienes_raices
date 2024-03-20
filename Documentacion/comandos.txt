@@ -1,20 +1,47 @@
-npm init
-npm i express	
-Nodemon npm i -D nodemon	
- npm install pug
+Validar Versiones:
+
+node -v       v20.11.1
+npm  -v       10.2.4
 
 
+
+Crear Proyecto:              npm init                crea el package.json
+Instala framework:           npm i express	        crea el package-lock.json y la carpeta node_modules
+Dependencia Nodemon          npm i -D nodemon	    dependencia de desarrollo que sirve para mantener levantado el servidor
+Motor de plantillas Pug      npm install pug          
+
+tailwindcss
 npm install -D tailwindcss
 npm install -D autoprefixer postcss postcss-cli
 npx tailwindcss init
 
+
+Base de datos 
 npm i sequelize mysql2	
 
 manejo de variables:  npm i dotenv
 Validaciones   : npm i express-validator
 Encriptar      : npm i bcrypt
-Envio de correo: npm install nodemailer
 
+Correo
+Envio de correo: npm install nodemailer
+Mailtrap  para recibir las pruebas..
+
+Seguridad
 JsonwebTokens:   npm install jsonwebtoken
 cookies      :   npm install cookie-parser
 csrf         :   npm i tiny-csrf
+
+
+
+WebPack
+npm i -D webpack webpack-cli
+
+
+//Comandos de ejecucion
+Servidor:      npm run server
+
+Lo podemos resumir con una sola instruccion:  npm run dev  configurando el package.json  e instalar  npm i -D concurrently  (ejecutar multiples script al mismo tiempo)
+tailwindcss:   npm run css
+webpack    :   npm run js
+
