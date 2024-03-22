@@ -1,17 +1,20 @@
 import express from 'express'
 import { body } from 'express-validator'
+import protectRoute from '../middleware/protectRoute.js'
 
-import { admin, crear, guardar } from '../controllers/propiedadController.js'
+
+import { admin, agregarImagen, crear, guardar } from '../controllers/propiedadController.js'
+
 
 const router = express.Router()
 
 
-router.get('/mis-propiedades', admin)
-router.get('/propiedad/crear', crear)
+router.get('/mis-propiedades', protectRoute, admin)
+router.get('/propiedad/crear', protectRoute, crear)
 
 
 
-router.post('/propiedad/guardar', 
+router.post('/propiedad/guardar', protectRoute, 
     body('title').notEmpty().withMessage('El titulo de la propiedad es obligatorio'),
     body('description')
         .notEmpty().withMessage('La descripción es obligatoria')
@@ -26,6 +29,6 @@ router.post('/propiedad/guardar',
     guardar
 )
 
-
+router.get('/propiedad/agregar-imagen/:id', protectRoute, agregarImagen)
 
 export default router

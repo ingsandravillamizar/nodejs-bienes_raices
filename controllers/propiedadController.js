@@ -7,7 +7,7 @@ import { Category, Price, Property } from '../models/index.js'
 const admin = (req, res)=>{
     res.render('properties/admin', {
         page: 'Mis propiedades',
-        topbar: true
+        // topbar: true
     })
 }
 
@@ -26,7 +26,7 @@ const crear = async (req, res) =>{
 
     res.render('properties/create',{
         page: 'Crear propiedad',
-        topbar: true,
+        // topbar: true,
         prices,
         categories,
         csrfToken : req.csrfToken(),
@@ -46,7 +46,7 @@ const guardar = async (req, res)=>{
         ])
         res.render('properties/create', {
             page: 'Crear propiedad',
-            topbar: true,
+            // topbar: true,
             prices,
             categories,
             errors: result.array(),
@@ -55,12 +55,15 @@ const guardar = async (req, res)=>{
         })
     }
 
-    console.log(req.body);
+    //console.log(req.body);
     //Crear registro
 
     const {title,description, rooms, parking, wc , address, lat, lng , price:priceId, category:categoryId} = req.body;   //desestructuramos del body
-    try {
+    
+    //console.log ("este es el usuario logeado. " , req.user)
+    const { id:userId } = req.user;
 
+    try {
         //creamos una constante, con un metodo await para crear la propiedad
         const propiedad =  await Property.create({
             title,
@@ -72,8 +75,13 @@ const guardar = async (req, res)=>{
             lat,
             lng,
             priceId ,
-            categoryId
+            categoryId,
+            userId,
+            image:''
         })
+        const {id} = propiedad;
+        return res.redirect(`/propiedad/agregar-imagen/${id}`);
+
         
     } catch (error) {
         console.log(error);
@@ -81,10 +89,26 @@ const guardar = async (req, res)=>{
 }
 
 
+const agregarImagen = async (req, res) =>{
+
+    const {id} = req.params;
+
+    res.render('properties/agregar-imagen', {
+        page: 'Agregar imagen',
+        // topbar: true,
+        id,
+        // errors: result.array(),
+        csrfToken : req.csrfToken(),
+        data : req.body
+    })
+}
+
+ 
 
 
 export {
     admin,
     crear,
-    guardar
+    guardar,
+    agregarImagen
 }

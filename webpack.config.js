@@ -3,7 +3,8 @@ import path from 'path'
 export default {
     mode: 'development',
     entry:{
-        map : './src/js/configMap.js',
+        map    : './src/js/configMap.js',
+        addimage : './src/js/addImage.js',
     },
     output:{
         filename : '[name].js',
