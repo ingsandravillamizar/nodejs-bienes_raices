@@ -6,7 +6,8 @@ import usuarioRoutes from './routes/usuarioRoutes.js';
 import propiedadRoutes from './routes/propiedadRoutes.js';
 import db from './config/db.js';
 import cookieParser from 'cookie-parser';
-import csurf from 'tiny-csrf';
+
+import csurf from 'csurf';  //import csurf from 'tiny-csrf';
 
 
 
@@ -30,11 +31,13 @@ try {
 app.use(express.urlencoded({ extended: true }));
 
 //Habilitar Cookie Parser
-app.use(cookieParser("cookie-parser-secret"));
+//app.use(cookieParser("cookie-parser-secret"));  // por tiny
+app.use(cookieParser());  // por csurf
+
 
 // Habilitar el CSRF
-app.use(csurf("123456789iamasecret987654321look"));   //string de 32 caracteres
-
+//app.use(csurf("123456789iamasecret987654321look"));   //string de 32 caracteres  por tiny
+app.use(csurf({cookie:true}));   //por csurf
 
 // 5.  Habilitar plantilla Pub:  configuramos
 app.set('view engine', 'pug') //voy a utilizar un motor de plantillas llamado pug

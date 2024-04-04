@@ -38,8 +38,8 @@ WebPack
 npm i -D webpack webpack-cli
 
 
-Dropzone:  npm install dropzone@5.9.3     https://www.dropzone.dev/
-
+Dropzone:  npm install dropzone@5.9.3     https://www.dropzone.dev/  para seleccionar los archivos
+multer  :  npm i multer      para subir los archivos
 
 
 
@@ -49,5 +49,8 @@ Servidor:      npm run server
 Lo podemos resumir con una sola instruccion:  npm run dev  configurando el package.json  e instalar  npm i -D concurrently  (ejecutar multiples script al mismo tiempo)
 tailwindcss:   npm run css
 webpack    :   npm run js
+
+
+
 
 https://gist.github.com/MChuil/38bd97f61cca7b9693d7d93f693195ac

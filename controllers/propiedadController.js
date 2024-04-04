@@ -4,13 +4,25 @@ import { validationResult } from 'express-validator';
 import { Category, Price, Property } from '../models/index.js'
 
 
-const admin = (req, res)=>{
+const admin = async (req, res)=>{
+
+    const { id } = req.user
+
+    const properties = await Property.findAll({
+        where :{
+            userId : id
+        },
+        include: [  //Esto es como hacer un Join entre propiedades y categorias
+            { model: Category},
+            { model: Price}
+        ]
+    })
+
     res.render('properties/admin', {
         page: 'Mis propiedades',
-        // topbar: true
+        properties
     })
 }
-
 
 const crear = async (req, res) =>{
     //const prices = Price.findAll();
@@ -91,24 +103,95 @@ const guardar = async (req, res)=>{
 
 const agregarImagen = async (req, res) =>{
 
-    const {id} = req.params;
+
+    const {id} = req.params
+
+    // validar que  la propiedad existe..
+    const property = await Property.findByPk(id) 
+
+    if (!property) {
+        return res.redirect('/mis-propiedades')
+    }
+
+    // validar que no este publicada
+    if (property.published) {
+        return res.redirect('/mis-propiedades')
+    }
+
+    //validar que  la propiedad pertenece al usuario que se logeo
+    if(property.userId.toString() !== req.user.id.toString()){
+        return res.redirect('/mis-propiedades')
+    }
+
+    // console.log("this is token:", req.csrfToken());
 
     res.render('properties/agregar-imagen', {
-        page: 'Agregar imagen',
-        // topbar: true,
-        id,
-        // errors: result.array(),
+        page: 'Agregar imagen | ' + property.title,
         csrfToken : req.csrfToken(),
-        data : req.body
+        property,
+        // data : req.body
+    })
+
+  
+}
+
+const saveImage = async(req, res, next) =>{
+    const {id } = req.params
+    try {
+        const property = await Property.findByPk(id)
+        console.log(req.file)
+        //Almacenar la imagen y publicar la propiedad
+        property.image = req.file.filename
+        property.published = 1
+        await property.save()
+        next()
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+const editar = async(req, res)=>{
+
+    const { id } = req.params
+    console.log(id)
+    //validar que la propiedad exista
+    const property = await Property.findByPk(id)
+
+
+    if(!property){
+        return res.redirect('/mis-propiedades')
+    }
+
+    //validar que la propiedad sea del usuario
+    if(property.userId.toString() !== req.user.id.toString()){
+        return res.redirect('/mis-propiedades')
+    }
+
+    // Consultando Precios y Categorias
+    const [prices, categories] = await Promise.all([
+        Price.findAll(),
+        Category.findAll()
+    ])
+
+    property.category = property.categoryId;
+    property.price = property.priceId;
+    res.render('properties/edit',{
+        page: 'Editar propiedad - ' + property.title,
+        prices,
+        categories,
+        csrfToken : req.csrfToken(),
+        data: property,
     })
 }
 
- 
 
 
 export {
     admin,
     crear,
     guardar,
-    agregarImagen
+    agregarImagen,
+    saveImage,
+    editar
 }

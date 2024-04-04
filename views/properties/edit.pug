@@ -1,9 +1,11 @@
 extends ../layout/admin
 block styles
     link(rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css")
-    
 
 block contenido
+
+   
+
     div.py-10
         h1.text-4xl.my-10.font-extrabold.text-center Bienes 
             span.font-normal Raices
@@ -14,9 +16,11 @@ block contenido
                 each error in errors 
                     p.bg-red-600.text-white.uppercase.text-xs.text-center.p-2.mb-1.font-bold= error.msg
 
-
         div(class="bg-white shadow py-8 px-4 mx-auto rounded my-10 max-w-4xl md:px-12")
-            form.space-y-8(method= "post" action = "/propiedad/guardar")
+            form.space-y-8(method="post" action="/propiedad/guardar")
+
+                p= JSON.stringify( data, undefined , 2)
+
                 input(type="hidden" name="_csrf" value= csrfToken)
                 div.space-y-4
                     h3.text-lg.font-medium.text-gray-900 Datos de la propiedad
@@ -24,13 +28,11 @@ block contenido
                 
                 div
                     label.block.text-sm.uppercase.text-gray-700.mb-5.font-bold(for="title") Titulo de la propiedad
-                    input#title.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Ej. Casa con vista al mar", 
-                    type="text", name="title" value= data ? data.title : '')
+                    input#title.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Ej. Casa con vista al mar", type="text", name="title" value= data ? data.title : '')
                 div
                     label.block.text-sm.uppercase.text-gray-700.mb-5.font-bold(for="description") Descripción de la propiedad
-                    textarea#description.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Ej. Dos pisos, etc", 
-                    name="description")=data ? data.description : ''
-        
+                    textarea#description.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Ej. Dos pisos, etc", name="description")=data ? data.description : ''
+                
                 div(class="md:flex md:gap-4 space-y-5 md:space-y-0")
                     div(class="md:w-1/2")
                         label.block.text-sm.uppercase.text-gray-700.mb-5.font-bold(for="category") Categoria
@@ -40,14 +42,13 @@ block contenido
                                 option(value = category.id selected= data.category ? data.category == category.id : false )= category.name
             
 
-            
+
                     div(class="md:w-1/2")
                         label.block.text-sm.uppercase.text-gray-700.mb-5.font-bold(for="price") Precio
                         select#price.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(name="price")
                             option(value='') Seleccionar
                             each price in prices
                                 option(value=price.id selected=data.price ? data.price == price.id : null)= price.name 
-                            
                 div(class="md:flex md:gap-4 space-y-5 md:space-y-0")
                     div(class="md:w-1/3")
                         label.block.text-sm.uppercase.text-gray-700.mb-5.font-bold(for="rooms") Habitaciones
@@ -63,8 +64,7 @@ block contenido
                             option(value='') Seleccionar
                             - var i = 1;
                                 while i <= 4
-                                    //- option(value=i) #{i++}
-                                    option(value=i selected= data.parking? data.parking == i : false) #{i++}
+                                    option(value=i selected = data.parking ? data.parking == i : false ) #{i++}
 
                     div(class="md:w-1/3")
                         label.block.text-sm.uppercase.text-gray-700.mb-5.font-bold(for="wc") Wc
@@ -72,31 +72,22 @@ block contenido
                             option(value='') Seleccionar
                             - var i = 1;
                                 while i <= 6
-                                    //- option(value=i) #{i++}
-                                    option(value=i selected= data.wc? data.wc == i : false) #{i++}
+                                    option(value=i selected = data.wc ? data.wc == i : false) #{i++}
                 
                 div.border-gray-200.border-t.py-5.space-y-8
                     h3.text-lg.font-medium.text-gray-900 Ubicación
-                    p.text-gray-600 Indica la propiedad en el mapa moviendo el Pin 
+                    p.text-gray-600 Indica la propiedad en el mapa
 
                 #showMap.h-96
 
                 div
-                    p.calle !{data ? data.address : ''}
+                    p.calle= data.address ? data.address : ''
                 
-                input(type="hidden" name="address" id="address" value= data.address ? data.address : '')
-                //- input(type="hidden" name="lat" id="lat")
-                //- input(type="hidden" name="lng" id="lng")
-
-
-                input(type="hidden" name="lat" id="lat" value=  data ? data.lat : '')
-                input(type="hidden" name="lng" id="lng" value=  data ? data.lng : '')
-
-
+                    input(type="hidden" name="address" id="address" value=data.address ? data.address : '')
+                    input(type="hidden" name="lat" id="lat" value=data.lat ? data.lat : '')
+                    input(type="hidden" name="lng" id="lng" value=data.lng ? data.lng : '')
                 
-
                 input(type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-800 rounded text-white font-bold uppercase cursor-pointer" value="Siguiente")
-
 
 block scripts
     script(src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js")
