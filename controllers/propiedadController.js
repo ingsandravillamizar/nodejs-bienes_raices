@@ -1,27 +1,82 @@
 
 import { validationResult } from 'express-validator';
-
 import { Category, Price, Property } from '../models/index.js'
-
+import {unlink} from 'node:fs/promises'
 
 const admin = async (req, res)=>{
 
-    const { id } = req.user
+    //PAGINACION
+    //propiedad?page=1
+    //leer query string
+    console.log(req.query)
+    
+    //leer query string
+    const {page:paginaActual, order } = req.query
 
-    const properties = await Property.findAll({
-        where :{
-            userId : id
-        },
-        include: [  //Esto es como hacer un Join entre propiedades y categorias
-            { model: Category},
-            { model: Price}
-        ]
-    })
+    //expresion regular:  grupo de caracteres que se compara con un dato para ver si cumple con las reglas 
+    const expresion  = /^[0-9]$/       //recibir solo numero  ^el inicio es con numero y $ el final es con numero
+    //expresion.text(page)            // toma page y ve si cumple con la expresion regresa un booleano
 
-    res.render('properties/admin', {
-        page: 'Mis propiedades',
-        properties
-    })
+    if( !expresion.test(paginaActual) ){
+        return res.redirect('/mis-propiedades?page=1')
+    }
+
+    // if(!isNaN (page))    Esto pregunta si no es un numero ES OTRA forma de validar
+
+
+    try {
+        const { id } = req.user
+
+        //Para paginar necesitamos dos variables el limit y el offset  1-10  11-20 21-30
+
+        const limit  = 4
+        const offset =(paginaActual*limit)- limit
+
+
+        /**
+         * si limit = 10
+         * 1 * 10 = 10-10  = 0   offset inicial  sera 0
+         * 2 * 10 = 20-10  = 10  offset 10
+         * 3 * 10 = 30-10  = 20  offset 20
+         */
+        
+
+
+        const [properties, total] = await Promise.all ([
+            //PRIMER ELEMENTO DE LA PROMESA  properties
+            Property.findAll({   //las consultas siempre deben llevar un await
+                limit,                 // limit = limit
+                offset: offset,        // o lo podemos dejar como offset  solo no necesariamente  offset:ofsset depende de como llamamos la constante
+                where :{
+                    userId : id
+                },
+                include: [  //Esto es como hacer un Join entre propiedades y categorias
+                    { model: Category},
+                    { model: Price}
+                ]
+            }),
+
+            //SEGUNDO  ELEMENTO DE LA PROMESA   total
+            Property.count({    
+                where :{
+                    userId : id
+                }
+            })
+        ]) 
+
+        
+        res.render('properties/admin', {
+            page: 'Mis propiedades',
+            csrfToken : req.csrfToken(),
+            properties,
+            paginacion: Math.ceil(total/limit),
+            paginaActual, offset, total, limit
+        })
+        
+    } catch (error) {
+        console.log(error)
+    }
+
 }
 
 const crear = async (req, res) =>{
@@ -174,8 +229,9 @@ const editar = async(req, res)=>{
         Category.findAll()
     ])
 
-    property.category = property.categoryId;
-    property.price = property.priceId;
+    // property.category = property.categoryId;
+    // property.price = property.priceId;
+
     res.render('properties/edit',{
         page: 'Editar propiedad - ' + property.title,
         prices,
@@ -185,7 +241,156 @@ const editar = async(req, res)=>{
     })
 }
 
+const actualizar = async(req,res) => {
 
+    const { id } = req.params
+    console.log(id)
+
+
+     //validar que la propiedad exista
+    const property = await Property.findByPk(id)
+    if(!property){
+        return res.redirect('/mis-propiedades')
+    }
+
+     //validar que la propiedad sea del usuario
+    if(property.userId.toString() !== req.user.id.toString()){
+        return res.redirect('/mis-propiedades')
+    }
+
+
+    // Resultado de la validación
+    let result = validationResult(req)
+    if(!result.isEmpty()){
+        const [prices, categories] = await Promise.all([
+            Price.findAll(),
+            Category.findAll()
+        ])
+        res.render('properties/edit', {
+            page: 'Editar propiedad - ' + property.title,
+            prices,
+            categories,
+            errors: result.array(),
+            csrfToken : req.csrfToken(),
+            data : req.body             // Envio el req.body que son los datos del formulario
+        })
+    }   
+
+
+        //Actualizar los datos de la propiedad
+
+
+
+        const {title,description, rooms, parking, wc , address, lat, lng , price:priceId, category:categoryId} = req.body;   //desestructuramos del body
+    
+        //console.log ("este es el usuario logeado. " , req.user)
+        const { id:userId } = req.user;
+
+        try {
+            //creamos una constante, con un metodo await para crear la propiedad
+            Property.set({
+                title,
+                description,
+                rooms,
+                parking,
+                wc,
+                address,
+                lat,
+                lng,
+                priceId ,
+                categoryId
+            })
+            await property.save()
+            return res.redirect('/mis-propiedades');
+
+            
+        } catch (error) {
+            console.log(error);
+        }
+    
+}
+
+const eliminar = async(req,res) => {
+   // res.send("eliminando")
+    const { id } = req.params
+
+    //validar que la propiedad exista
+    const property = await Property.findByPk(id)
+    if(!property){
+        return res.redirect('/mis-propiedades')
+    }
+
+     //validar que la propiedad sea del usuario
+    if(property.userId.toString() !== req.user.id.toString()){
+        return res.redirect('/mis-propiedades')
+    }
+
+
+    //Eliminar la imagen
+    await unlink(`public/uploads/${property.image}`)
+    console.log(`imagen eliminada ${property.image}`)
+
+
+    //Eliminar el registro
+    await property.destroy()
+    return res.redirect('/mis-propiedades')
+
+
+}
+
+
+
+const actualizarPublicado = async(req,res) => {
+    // res.send("eliminando")
+    const { id } = req.params
+
+     //validar que la propiedad exista
+    const property = await Property.findByPk(id)
+    if(!property){
+        return res.redirect('/mis-propiedades')
+    }
+
+      //validar que la propiedad sea del usuario
+    if(property.userId.toString() !== req.user.id.toString()){
+        return res.redirect('/mis-propiedades')
+    }
+
+     //Actualizar published el registro
+    const published = (property.published == 1) ? 0:1
+    property.set({published})
+    await property.save()
+    return res.redirect('/mis-propiedades')
+}
+
+const verPropiedad = async(req,res) => {
+    const { id } = req.params
+
+     //validar que la propiedad exista
+    const property = await Property.findByPk(id,{
+        include: [  //Esto es como hacer un Join entre propiedades y categorias
+        { model: Category},
+        { model: Price}
+    ]
+    })
+
+    if(!property){
+        //return res.render('/mis-propiedades')
+        return res.redirect('/404')
+
+    }
+
+    res.render('properties/show', {
+        property,
+        page: property.title
+    })
+}
+
+
+const notFound = async(req,res) =>{
+    res.render('properties/404', {
+ 
+    })
+}
 
 export {
     admin,
@@ -193,5 +398,10 @@ export {
     guardar,
     agregarImagen,
     saveImage,
-    editar
+    editar,
+    actualizar,
+    eliminar,
+    actualizarPublicado,
+    verPropiedad,
+    notFound
 }

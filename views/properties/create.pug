@@ -92,10 +92,9 @@ block contenido
                 input(type="hidden" name="lat" id="lat" value=  data ? data.lat : '')
                 input(type="hidden" name="lng" id="lng" value=  data ? data.lng : '')
 
-
-                
-
-                input(type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-800 rounded text-white font-bold uppercase cursor-pointer" value="Siguiente")
+                div(class="shadow py-8 px-4 mx-auto rounded my-10 max-w-4xl md:px-12")           
+                    a(href="/mis-propiedades"  class="block w-full py-3 bg-gray-300 hover:bg-gray-400 rounded text-gray-800 font-bold uppercase text-center cursor-pointer mb-4") Cancelar
+                    input(type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-800 rounded text-white font-bold uppercase cursor-pointer" value="Siguiente")
 
 
 block scripts

@@ -1,0 +1,52 @@
+extends ../layout/public
+
+block styles
+    link(rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css")
+
+
+block contenido 
+    //- h1 mostrando propiedad
+    //- pre= JSON.stringify( property, undefined , 2)
+
+    a(href="/mis-propiedades" class="rounded p-2 bg-indigo-600 hover:bg-indigo-800 text-sm text-white uppercase inline-block my-5 text-center w-full sm:w-auto") Propiedades
+
+    div(class="py-5")
+        h1(class="text-4xl my-10 font-extrabold text-center")= property.title
+
+        div 
+            a(href="#" class="font-bold text-gray-600 text-sm") Categoria:  
+                span(class="font-normal")= property.category.name
+
+
+        div(class="mt-f md:flex md:gap-4")
+            div(class="md:w-2/3 bg-white shadow rounded-lg")
+                img(src=`/uploads/${property.image}`, alt=`${property.tittle}`)
+                div(class="px-5 py-10 space-y-5")
+                    p= property.description
+
+                    h2(class="text-2xl leading-10 font-bold text-gray-900") Informacion de la propiedad
+
+                    div(class="grid grid-cols-1 md:grid-cols-2")
+                        p(class="font-bold text-gray-600 text-sm") WC 
+                            span(class="text-lg text-gray-800 block")= property.wc
+                        p(class="font-bold text-gray-600 text-sm") Habitaciones
+                            span(class="text-lg text-gray-800 block")= property.rooms 
+                        p(class="font-bold text-gray-600 text-sm") Estacionamiento
+                            span(class="text-lg text-gray-800 block")= property.parking 
+                        p(class="font-bold text-gray-600 text-sm") precio 
+                            span(class="text-lg text-gray-800 block")= property.price.name
+            div(class="md:w-1/3")
+                h3(class="text-center py-10 text-2xl font-bold text-gray-900") Ubicación
+                div(class="h-96" id="Map")
+                    p(id="lat" class="hidden")= property.lat 
+                    p(id="lng" class="hidden")= property.lng
+                div(class="p-5 text-gray-600 text-xs font-bold") Dirección 
+                    span(id="address" class="text-gray-900 text-lg block")= property.address    
+
+
+
+
+
+block scripts 
+    script(src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js")
+    script(src="/js/showMap.js")
