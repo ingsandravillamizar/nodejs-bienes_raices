@@ -4,6 +4,8 @@
 import express from 'express';     
 import usuarioRoutes from './routes/usuarioRoutes.js';
 import propiedadRoutes from './routes/propiedadRoutes.js';
+import appRoutes from './routes/appRoutes.js';
+import apiRoute from './routes/apiRoute.js';
 import db from './config/db.js';
 import cookieParser from 'cookie-parser';
 
@@ -48,8 +50,11 @@ app.set('views','./views')  // ruta donde estaran las vistas
 app.use(express.static ('public'))
 
 //4.  crear Routing
+app.use('/', appRoutes);
 app.use('/auth', usuarioRoutes);  //vas a usar en la ruta principal usuarioRoutes 
 app.use('/', propiedadRoutes);
+app.use('/api', apiRoute);
+
 
 
 //3.  Definir Puerto 
