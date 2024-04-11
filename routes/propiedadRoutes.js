@@ -3,7 +3,7 @@ import { body } from 'express-validator'
 import protectRoute from '../middleware/protectRoute.js'
 import upload from '../middleware/uploadFile.js'
 //import { upload } from '../middleware/uploadFile.js';
-import { admin, agregarImagen, crear, guardar, saveImage, editar, actualizar, eliminar,  actualizarPublicado, verPropiedad, notFound} from '../controllers/propiedadController.js'
+import { admin, agregarImagen, crear, guardar, saveImage, editar, actualizar, eliminar,  actualizarPublicado, verPropiedad} from '../controllers/propiedadController.js'
 
 
 const router = express.Router()
@@ -65,6 +65,6 @@ router.post('/propiedad/actualizar/estado/:id', protectRoute, actualizarPublicad
 
 //Rutas para area pública
 router.get('/propiedad/:id',verPropiedad )
-router.get('/404',notFound )
+// router.get('/404',notFound )
 
 export default router

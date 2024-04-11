@@ -4,8 +4,21 @@
     const lng = -73.7232909 
 
     const mapa = L.map('home-map').setView([lat, lng ], 8);
-   
 
+
+    let markers = new L.FeatureGroup().addTo(mapa);  //agrupar pines
+
+    let propiedades = []
+
+    //filtros
+    const filters = {
+        category: '',
+        price: ''
+    }
+
+      //Seleccionar los select
+    const categorySelect = document.querySelector('#categories')
+    const priceSelect    = document.querySelector('#prices')
 
 
 
@@ -14,10 +27,6 @@
     }).addTo(mapa);
 
     //console.log("longitudes",lat,lng)
-
-    
-
-
 
     // Icono
     var myIcon = L.icon({
@@ -34,38 +43,45 @@
 
 
 
-  // El Pin
-let marker = new L.marker([lat, lng], {
-     draggable: true,
-     autoPan: true,
-     icon: myIcon // Esta línea se ha movido dentro de las opciones del marcador
-  }).addTo(mapa);  //.bindPopup(address);
+    // El Pin
+    let marker = new L.marker([lat, lng], {
+        draggable: true,
+        autoPan: true,
+        icon: myIcon // Esta línea se ha movido dentro de las opciones del marcador
+    }).addTo(mapa);  //.bindPopup(address);
 
 
-  
+     //listeners
+    categorySelect.addEventListener('change', e => {
+        //console.log(e.target.value)
+        filters.category = +e.target.value      //el simbolo + me convierte en numero    console.log(filters) para ver lo que llenamos en el array filters
+        
+        filterProperty()
+    })
 
+    priceSelect.addEventListener('change', e => {
+        filters.price = +e.target.value
+        filterProperty()
+    })
 
-
-
- let markers = new L.FeatureGroup().addTo(mapa);
 
 
 const consultaPropiedades = async () => {
     try {
         const url = '/api/propiedades'
         const respuesta = await fetch(url)
-        const propiedades = await respuesta.json()
-        console.log(propiedades);
-
-   
-     
-         mostrarPropiedades(propiedades)
+        propiedades = await respuesta.json()
+        //console.log(propiedades);
+        mostrarPropiedades(propiedades)
     } catch(error) {
         console.log(error);
     }
 };
 
 const mostrarPropiedades = propiedades =>{
+
+    //limpiar marcadores
+    markers.clearLayers()
     
     propiedades.forEach(propiedad => {
         const mark = new L.marker([propiedad?.lat , propiedad?.lng], {
@@ -79,12 +95,28 @@ const mostrarPropiedades = propiedades =>{
         </div>
         <div style="margin-bottom: 5px;">${propiedad.title}</div>
         <div style="margin-bottom: 5px; color: #4338ca;"> ${propiedad.price.name}
-
-    </div>`);
+        </div>`)
         markers.addLayer(mark)
     });
-    
 };
+
+
+const filterProperty = ()=>{
+    // const result = propiedades.filter( propiedad =>{
+    //     return filters.category ?  property.categoryId == filters.category : property
+    // }).filter(propiedad => {
+    //     return filters.price ? property.priceId == filters.price : property
+    // })
+    //console.log("todas las propiedades", propiedades)
+    const result = propiedades.filter(filterCategory).filter(filterPrice)
+    //console.log("resultado filtro", result)
+    mostrarPropiedades(result)
+} 
+
+const filterCategory = (properties) => filters.category ? properties.categoryId == filters.category : properties
+
+const filterPrice = (properties) => filters.price ? properties.priceId == filters.price : properties
+
 consultaPropiedades()
 
 

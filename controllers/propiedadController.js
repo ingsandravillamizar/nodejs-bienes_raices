@@ -386,11 +386,7 @@ const verPropiedad = async(req,res) => {
 }
 
 
-const notFound = async(req,res) =>{
-    res.render('properties/404', {
- 
-    })
-}
+
 
 export {
     admin,
@@ -402,6 +398,6 @@ export {
     actualizar,
     eliminar,
     actualizarPublicado,
-    verPropiedad,
-    notFound
+    verPropiedad
+   
 }
