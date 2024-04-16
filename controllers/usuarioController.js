@@ -312,6 +312,13 @@ const recover  = async(req,res) => {
 
 }
 
+const logout = async(req, res) =>{
+    //res.send('saliendo')
+    return res.clearCookie('_token').status(200).redirect('/auth/login')
+    
+}
+
+
 export {
     loginForm,
     auth,
@@ -321,5 +328,6 @@ export {
     forgotPasswordForm,
     recoverPassword,
     recoverTokenConfirm,
-    recover
+    recover,
+    logout
 }

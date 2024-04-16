@@ -18,8 +18,9 @@ router.get('/categorias/:id', categories)
 router.get('/404', nofFound)
 
 
+
 //buscador
-router.post('buscadpr', search)
+router.post('/buscador', search)
 
 
 

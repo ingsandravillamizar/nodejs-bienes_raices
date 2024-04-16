@@ -1,7 +1,8 @@
 
 import { validationResult } from 'express-validator';
-import { Category, Price, Property } from '../models/index.js'
+import { Category, Price, Property, Message, User } from '../models/index.js'
 import {unlink} from 'node:fs/promises'
+import { isSeller, formateDate } from '../helpers/index.js'
 
 const admin = async (req, res)=>{
 
@@ -49,10 +50,12 @@ const admin = async (req, res)=>{
                 offset: offset,        // o lo podemos dejar como offset  solo no necesariamente  offset:ofsset depende de como llamamos la constante
                 where :{
                     userId : id
+               
                 },
                 include: [  //Esto es como hacer un Join entre propiedades y categorias
                     { model: Category},
-                    { model: Price}
+                    { model: Price},
+                    { model: Message}
                 ]
             }),
 
@@ -365,6 +368,8 @@ const actualizarPublicado = async(req,res) => {
 const verPropiedad = async(req,res) => {
     const { id } = req.params
 
+    console.log("usuario:", req.user)
+
      //validar que la propiedad exista
     const property = await Property.findByPk(id,{
         include: [  //Esto es como hacer un Join entre propiedades y categorias
@@ -373,7 +378,7 @@ const verPropiedad = async(req,res) => {
     ]
     })
 
-    if(!property){
+    if(!property || !property.published ){
         //return res.render('/mis-propiedades')
         return res.redirect('/404')
 
@@ -381,11 +386,98 @@ const verPropiedad = async(req,res) => {
 
     res.render('properties/show', {
         property,
-        page: property.title
+        page: property.title,
+        csrfToken : req.csrfToken(),
+        user: req.user,
+        isSeller : isSeller(req.user?.id, property.userId) //true o false
+
     })
 }
 
+const sendMessage = async(req, res) => {
+    const { id } = req.params
+    //validar que la propiedad exista
+    const property = await Property.findByPk(id, {
+        include: [
+            { model: Price },
+            { model: Category }
+        ]
+    })
+    if(!property){
+        return res.redirect('/404')
+    }
 
+    //mostrar los errores
+    let result = validationResult(req)
+    if(!result.isEmpty()){
+        return res.render('properties/show', {
+            page: property.title,
+            property,
+            csrfToken : req.csrfToken(),
+            user: req.user,
+            isSeller : isSeller(req.user?.id, property.userId), //true o false
+            errors: result.array(),
+        })
+    }
+
+    const { message } = req.body
+    const { id: propertyId } = req.params
+    const { id: userId } = req.user
+    //Almacenar el mensaje
+    await Message.create({
+        message ,
+        propertyId,
+        userId
+    })
+
+    res.redirect('/mis-propiedades')
+
+    // res.render('properties/show', {
+    //     page: property.title,
+    //     property,
+    //     csrfToken : req.csrfToken(),
+    //     user: req.user,
+    //     isSeller : isSeller(req.user?.id, property.userId), //true o false
+    //     send: true
+    // })
+}
+
+
+//leer los mensajes
+const showMessages = async (req, res) =>{
+
+    const { id } = req.params
+    
+    //validar que la propiedad exista
+
+    /**
+     *  propiedades -> mensajes -> usuario (Daniel)
+     * 
+     */
+    const property = await Property.findByPk(id,{
+        include: [
+            { model: Message, 
+                include: [
+                    { model: User.scope('deletePassword') }
+                ]
+            },
+        ]
+    })
+    if(!property){
+        return res.redirect('/mis-propiedades')
+    }
+
+    //validar que la propiedad sea del usuario
+    if(property.userId.toString() !== req.user.id.toString()){
+        return res.redirect('/mis-propiedades')
+    }
+
+    res.render('properties/message',{
+        page: 'Mensajes',
+        messages: property.messages,
+        formateDate
+    })
+}
 
 
 export {
@@ -398,6 +490,8 @@ export {
     actualizar,
     eliminar,
     actualizarPublicado,
-    verPropiedad
-   
+    verPropiedad,
+    sendMessage,
+    showMessages
+
 }

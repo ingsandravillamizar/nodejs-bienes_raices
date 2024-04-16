@@ -1,11 +1,10 @@
 header.bg-indigo-600.p-4
     .container.mx-auto.flex.justify-between.items-center
-        a(href="/") 
             h1.text-2xl.text-white.font-extrabold.text-center Bienes
                 span.font-normal Raices
             nav(class="my-5 text-sm font-bold text-white md:flex md:items-center md:gap-3 hidden") 
-                a(href="") Mis propiedades
+                a(href="/mis-propiedades") Mis propiedades
                 a(href="") Mi perfil
-                a(class="rounded-lg py-2 px-10 bg-red-600" href="") Cerrar sesión
-
-
+                form(action="/auth/logout" method="post")
+                    input(type="hidden" name="_csrf" value= csrfToken)
+                    input(type="submit" class="rounded-lg py-2 px-10 bg-red-600  hover:bg-red-500 cursor-pointer" value="Cerrar sesión")

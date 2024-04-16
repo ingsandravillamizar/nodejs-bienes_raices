@@ -1,0 +1,1 @@
+Son funciones genericas  ejemplo enviar correo   generar token,    manejo de fechas

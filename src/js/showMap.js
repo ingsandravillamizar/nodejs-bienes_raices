@@ -39,8 +39,6 @@ marker = new L.marker([lat, lng], {
 }).addTo(mapa).bindPopup(address);
 
 
- 
-
 
     // // detectar el movimiento
     // marker.on('moveend', function(event){
