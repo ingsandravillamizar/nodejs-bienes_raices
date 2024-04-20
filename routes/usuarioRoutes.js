@@ -1,5 +1,6 @@
 import express from 'express';
-import {   forgotPasswordForm, loginForm, registerForm, register,  registerTokenConfirm, auth,  recoverPassword,  recoverTokenConfirm, recover, logout   } from '../controllers/usuarioController.js'; 
+import {   forgotPasswordForm, loginForm, registerForm, register,  registerTokenConfirm, auth,  recoverPassword,  recoverTokenConfirm, recover, logout, profileForm, profile   } from '../controllers/usuarioController.js'; 
+import identifyUser from '../middleware/identifyUser.js';
 
 const router = express.Router();
 
@@ -7,6 +8,8 @@ router.get('/login',     loginForm);
 router.post('/login',    auth);
 
 
+router.get('/profile', identifyUser, profileForm);
+router.post('/profile',     profile);
 
 
 //Ruta validacion token para confirmacion de correo en registro

@@ -108,6 +108,7 @@ const search = async(req, res) =>{
     //consultar propiedades
     const properties = await Property.findAll({
         where: {
+            published:1,
             title:{
                 [Sequelize.Op.like] : '%' + termino + '%'
             }

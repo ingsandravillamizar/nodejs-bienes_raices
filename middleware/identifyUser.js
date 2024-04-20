@@ -19,7 +19,7 @@ const identifyUser = async (req, res, next)=>{
         const user = await User.scope('deletePassword').findByPk(decoded.id)
         if(user){
             req.user = user
-            console.log("usuario valido.")
+            console.log("usuario valido....", req.user)
         }
         return next();
     } catch (error) {

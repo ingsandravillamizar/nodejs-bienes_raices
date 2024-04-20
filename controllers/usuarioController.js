@@ -13,6 +13,8 @@ const loginForm = (req, res) => {
     });
 }
 
+
+
 const auth = async (req, res) => {
 
     //Validar
@@ -312,10 +314,79 @@ const recover  = async(req,res) => {
 
 }
 
-const logout = async(req, res) =>{
+const logout = async(req, res, next) =>{
     //res.send('saliendo')
     return res.clearCookie('_token').status(200).redirect('/auth/login')
     
+}
+
+const profileForm = async (req, res) => {
+    try {
+        // Verificar si req.user está definido (es decir, el usuario está autenticado)
+        if (!req.user) {
+            // Si no hay usuario autenticado, redirigir al inicio de sesión o manejar la lógica adecuada
+            return res.redirect('/auth/login');
+        }
+
+        // Renderizar el formulario de perfil con los datos del usuario
+        res.render('auth/profile', {   
+            page: 'Perfil',
+            csrfToken: req.csrfToken(),
+            user: req.user  // Pasar los datos del usuario al renderizado del formulario
+        });
+    } catch (error) {
+        console.error('Error al cargar el formulario de perfil:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+}
+
+const profile = async (req, res) => {
+
+    const { name, email,   password } = req.body;
+
+    //validar si el usuario existe
+    const user = await User.findOne({where: {email}})
+    if(!user){
+        return res.render('auth/profile',{
+            page: `Editar Perfil: ${req.body.email}`,
+            csrfToken : req.csrfToken(),
+            errors: [{msg: 'Usuario No existe'}]
+        })
+    }
+
+
+    //realizar validaciones al formulario
+    await check('name').notEmpty().withMessage('El Nombre es Obligatorio').run(req)
+    await check('password').isLength({min:6}).withMessage('La Contraseña debe ser de minimo 6 caracteres ').run(req)
+    await check('repeat_password').equals(password).withMessage('Las contraseñas no son iguales ').run(req)
+
+    let result = validationResult(req)
+    if(!result.isEmpty()){    //verificar que que no haya errores
+        //errores
+        return res.render('auth/profile',{
+            page: `${req.body.email}`,
+            csrfToken : req.csrfToken(),
+            errors: result.array(),
+            user
+        })
+    }
+
+    const salt = await bcrypt.genSalt(10)
+    user.name = name
+    user.password = await bcrypt.hash(password, salt)
+    user.token = null
+    user.save()
+
+    return res.render('auth/account-confirm',{
+        page: 'Perfil Modificado',
+        mensaje: 'Almacenado correctamente',
+        error: false
+    })
+
+
+
+
+
 }
 
 
@@ -329,5 +400,7 @@ export {
     recoverPassword,
     recoverTokenConfirm,
     recover,
-    logout
+    logout,
+    profileForm,
+    profile
 }

@@ -1,0 +1,9 @@
+Olvide quitar en el primer commit quitar el .env
+    git rm --cached .env
+    git commit -m "Quitar .env del repositorio"
+    git push origin main
+
+https://app.fl0.com/
+
+
+https://filess.io/    Base de datos
