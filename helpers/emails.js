@@ -4,6 +4,8 @@ const emailRegister = async (data) => {
     const transport = nodemailer.createTransport({
         host: process.env.EMAIL_HOST,
         port: process.env.EMAIL_PORT,
+        secureConnection: true,
+        debug: true,
         auth: {
             user: process.env.EMAIL_USERNAME,
             pass: process.env.EMAIL_PASSWORD
@@ -14,7 +16,8 @@ const emailRegister = async (data) => {
 
     // Enviar el email
     await transport.sendMail({
-        from: 'Bienes Raices',
+        from: process.env.EMAIL_USERNAME,
+        // from: 'Bienes Raices',
         to: email,
         subject: 'Confirma tu cuenta en Bienes Raices',
         text:'Confirma tu cuenta en Bienes Raices',

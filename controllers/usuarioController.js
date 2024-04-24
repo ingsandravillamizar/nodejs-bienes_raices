@@ -145,7 +145,7 @@ const register = async (req, res) => {
     });
 
     // Mensaje de confirmación
-    res.render('layout/message', {
+    res.render('auth/account-confirm', {
         page: 'Cuenta creada correctamente',
         mensaje: 'Hemos enviado un correo de confirmación, presiona en el enlace'
     })
